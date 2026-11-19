@@ -1,0 +1,86 @@
+using demo;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using demo.Models;
+using demo.Repositories;
+
+namespace demo.Controllers
+{
+    public class AccountController : Controller
+    {
+        private readonly UserRepository _repository;
+
+        public AccountController()
+        {
+            _repository = new UserRepository();
+        }
+
+        // ==================== ĐĂNG NHẬP ====================
+        [HttpGet]
+        public IActionResult Login()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public IActionResult Login(LoginViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var user = _repository.Login(model.Username, model.Password);
+                if (user != null)
+                {
+                    // Lưu thông tin người dùng vào Session
+                    HttpContext.Session.SetObject("UserSession", user);
+
+                    // Đăng nhập thành công thì chuyển hướng về trang tra cứu bảo hành (hoặc trang chủ)
+                    return RedirectToAction("Index", "Home");
+                }
+                else
+                {
+                    ViewBag.Error = "Tài khoản hoặc mật khẩu không chính xác!";
+                }
+            }
+            return View(model);
+        }
+
+        // ==================== ĐĂNG KÝ ====================
+        [HttpGet]
+        public IActionResult Register()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public IActionResult Register(RegisterViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                bool isSuccess = _repository.Register(model);
+                if (isSuccess)
+                {
+                    TempData["Success"] = "Đăng ký thành công! Vui lòng đăng nhập.";
+                    return RedirectToAction("Login");
+                }
+                else
+                {
+                    ViewBag.Error = "Tên đăng nhập đã tồn tại trong hệ thống!";
+                }
+            }
+            return View(model);
+        }
+
+        // ==================== ĐĂNG XUẤT ====================
+        public IActionResult Logout()
+        {
+            HttpContext.Session.Clear(); // Xóa toàn bộ dữ liệu phiên làm việc
+            return RedirectToAction("Login");
+        }
+    }
+}
+
+
+
+
+
+

@@ -1,0 +1,44 @@
+@model List<demo.Models.RevenueViewModel>
+
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+
+<div class="container mt-5">
+    <h2 class="text-center mb-4">📊 THỐNG KÊ DOANH THU</h2>
+
+    @if (ViewBag.CheckoutMessage != null)
+    {
+        <div class="alert alert-info text-center">@ViewBag.CheckoutMessage</div>
+    }
+    <div class="alert alert-success text-center">
+        <h4>Tổng doanh thu: @String.Format("{0:N0}", ViewBag.TotalRevenue) VNĐ</h4>
+    </div>
+
+    <table class="table table-bordered">
+        <thead class="thead-dark">
+            <tr>
+                <th>Mã hóa đơn</th>
+                <th>Ngày thanh toán</th>
+                <th>Nhân viên thanh toán</th>
+                <th>Doanh thu</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model == null || !Model.Any())
+            {
+                <tr><td colspan="4" class="text-center text-muted">Chưa có dữ liệu doanh thu.</td></tr>
+            }
+            else
+            {
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>#@item.InvoiceId</td>
+                        <td>@item.Date.ToString("dd/MM/yyyy HH:mm")</td>
+                        <td>@item.EmployeeName</td>
+                        <td>@String.Format("{0:N0}", item.Total) VNĐ</td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+</div>

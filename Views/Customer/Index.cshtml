@@ -1,0 +1,86 @@
+@model demo.Models.Customer
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Quản lý khách hàng - An Phát PC</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" />
+</head>
+<body class="bg-light">
+    <div class="container py-5" style="max-width: 900px">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2 class="mb-0">👥 Quản lý khách hàng</h2>
+            <a href="/Home/Index" class="btn btn-outline-secondary">Trang chủ</a>
+        </div>
+
+        @if (ViewBag.CustomerMessage != null)
+        {
+            <div class="alert alert-success">@ViewBag.CustomerMessage</div>
+        }
+        @if (ViewBag.CustomerError != null)
+        {
+            <div class="alert alert-danger">@ViewBag.CustomerError</div>
+        }
+
+        <div class="card shadow-sm mb-4">
+            <div class="card-header bg-primary text-white"><strong>Tra cứu hồ sơ theo số điện thoại</strong></div>
+            <div class="card-body">
+                @using (Html.BeginForm("Index", "Customer", FormMethod.Get))
+                {
+                    <div class="form-row align-items-end">
+                        <div class="form-group col-md-9 mb-md-0">
+                            <label for="phone">Số điện thoại</label>
+                            <input id="phone" name="phone" value="@ViewBag.SearchPhone" class="form-control" type="tel" placeholder="Nhập số điện thoại khách hàng" />
+                        </div>
+                        <div class="form-group col-md-3 mb-0">
+                            <button type="submit" class="btn btn-primary btn-block">Tra cứu</button>
+                        </div>
+                    </div>
+                }
+                @if (ViewBag.NotFound == true)
+                {
+                    <div class="alert alert-warning mt-3 mb-0">Chưa có hồ sơ với số điện thoại này. Nhập thông tin bên dưới để thêm khách hàng.</div>
+                }
+            </div>
+        </div>
+
+        <div class="card shadow-sm">
+            <div class="card-header bg-light"><strong>@(ViewBag.CustomerFound == true ? "Cập nhật hồ sơ khách hàng" : "Thông tin khách hàng")</strong></div>
+            <div class="card-body">
+                @using (Html.BeginForm("Save", "Customer", FormMethod.Post))
+                {
+                    @Html.AntiForgeryToken()
+                    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+                    <div class="form-group">
+                        @Html.LabelFor(m => m.FullName)
+                        @Html.TextBoxFor(m => m.FullName, new { @class = "form-control", placeholder = "Nguyễn Văn A" })
+                        @Html.ValidationMessageFor(m => m.FullName, "", new { @class = "text-danger" })
+                    </div>
+                    <div class="form-group">
+                        @Html.LabelFor(m => m.Phone)
+                        @Html.TextBoxFor(m => m.Phone, new { @class = "form-control", type = "tel", placeholder = "0901234567" })
+                        @Html.ValidationMessageFor(m => m.Phone, "", new { @class = "text-danger" })
+                    </div>
+                    <div class="form-group">
+                        @Html.LabelFor(m => m.Email)
+                        @Html.TextBoxFor(m => m.Email, new { @class = "form-control", type = "email", placeholder = "email@example.com" })
+                        @Html.ValidationMessageFor(m => m.Email, "", new { @class = "text-danger" })
+                    </div>
+                    <div class="form-group">
+                        @Html.LabelFor(m => m.Address)
+                        @Html.TextAreaFor(m => m.Address, new { @class = "form-control", rows = 3, placeholder = "Địa chỉ khách hàng" })
+                        @Html.ValidationMessageFor(m => m.Address, "", new { @class = "text-danger" })
+                    </div>
+                    <button type="submit" class="btn btn-success">Lưu khách hàng</button>
+                    <a href="/Customer/Index" class="btn btn-outline-secondary ml-2">Làm mới</a>
+                }
+            </div>
+        </div>
+    </div>
+    <script src="/js/back-to-home.js"></script>
+</body>
+</html>
